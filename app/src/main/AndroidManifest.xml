@@ -12,9 +12,14 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
+            android:name=".PlayActivity"
+            android:exported="false"
+            android:theme="@style/White" />
+
+        <activity
             android:name=".MenuActivity"
             android:exported="false"
-            android:theme="@style/Theme.Sudoku"/>
+            android:theme="@style/Theme.Sudoku" />
         <activity
             android:name=".SplashActivity"
             android:exported="true"

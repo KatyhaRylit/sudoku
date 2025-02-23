@@ -7,4 +7,12 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">false</item>
     </style>
+
+    <style name="White" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
+<!--        <item name="android:windowTranslucentNavigation">true</item>-->
+
+    </style>
 </resources>
