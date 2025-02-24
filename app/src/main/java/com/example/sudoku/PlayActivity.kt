@@ -43,6 +43,16 @@ class PlayActivity : AppCompatActivity() {
                 sudokuGame.puzzle[selectedCol][selectedRow] = 0
             }
         }
+        binding.btnReboot.setOnClickListener {
+            sudokuGame = SudokuGame()
+            Log.d("MyLog", "new ")
+            for (i in 0 until 9) {
+                for (j in 0 until 9) {
+                    Log.d("MyLog", "${sudokuGame.puzzle[i][j]}")
+                }
+            }
+            setupSudokuBoard()
+        }
 
     }
 
@@ -109,6 +119,9 @@ class PlayActivity : AppCompatActivity() {
     private fun setupSudokuBoard() {
         val bigPadding = 10f
         val smallPadding = 4f
+
+        gridLayout.removeAllViews()
+
 
         gridLayout.viewTreeObserver.addOnGlobalLayoutListener {
             val widthGL = gridLayout.width
