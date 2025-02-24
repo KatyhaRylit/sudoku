@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.Gravity
 import android.widget.GridLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.example.sudoku.databinding.ActivityPlayBinding
 
 class PlayActivity : AppCompatActivity() {
@@ -23,8 +24,8 @@ class PlayActivity : AppCompatActivity() {
     private var isSelectedCell = false
     private var selectedRow: Int = -1
     private var selectedCol: Int = -1
-
-
+    private val undoStack = ArrayDeque<Move>()
+    private val redoStack = ArrayDeque<Move>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,27 +34,113 @@ class PlayActivity : AppCompatActivity() {
 
         gridLayout = findViewById(R.id.sudokuNumbers)
         sudokuGame = SudokuGame()
+        initDefaultPuzzle()
         setupSudokuBoard()
         setupButtons()
         startTimer()
 
+        binding.ivNextStep.alpha = 0.5f
+        binding.ivPreviousStep.alpha = 0.5f
+
+
         binding.btnDelete.setOnClickListener {
             if (selectedCell != null && isSelectedCell && !((selectedRow to selectedCol) in fixedCells)) {
                 selectedCell?.text = ""
-                sudokuGame.puzzle[selectedCol][selectedRow] = 0
+                sudokuGame.puzzle[selectedRow][selectedCol] = 0
+                selectedCell?.setTextColor(Color.BLACK)
             }
-        }
-        binding.btnReboot.setOnClickListener {
-            sudokuGame = SudokuGame()
-            Log.d("MyLog", "new ")
-            for (i in 0 until 9) {
-                for (j in 0 until 9) {
-                    Log.d("MyLog", "${sudokuGame.puzzle[i][j]}")
-                }
-            }
-            setupSudokuBoard()
         }
 
+        binding.btnReboot.setOnClickListener {
+            resetGame()
+        }
+
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+
+        binding.ivPreviousStep.setOnClickListener {
+            undoMove()
+        }
+
+        binding.ivNextStep.setOnClickListener {
+            redoMove()
+        }
+
+
+    }
+
+    private fun undoMove() {
+        if (undoStack.isNotEmpty()) {
+            val lastMove = undoStack.removeLast()
+            redoStack.addLast(lastMove)
+            binding.ivNextStep.alpha = 1f
+            sudokuGame.puzzle[lastMove.row][lastMove.col] = lastMove.oldValue
+            val cellIndex = lastMove.row * 9 + lastMove.col
+            val cell = gridLayout.getChildAt(cellIndex) as TextView
+            cell.text = if (lastMove.oldValue != 0) lastMove.oldValue.toString() else ""
+            selectCell(cell, lastMove.row, lastMove.col)
+            if (undoStack.isEmpty()) {
+                binding.ivPreviousStep.alpha = 0.5f
+            }
+        } else {
+            binding.ivPreviousStep.alpha = 0.5f
+        }
+    }
+
+    private fun redoMove() {
+        if (redoStack.isNotEmpty()) {
+            val move = redoStack.removeLast()
+            sudokuGame.puzzle[move.row][move.col] = move.newValue
+            val cellIndex = move.row * 9 + move.col
+            val cell = gridLayout.getChildAt(cellIndex) as TextView
+            cell.text = move.newValue.toString()
+
+            if (!sudokuGame.isMoveCorrect(move.row, move.col, move.newValue)) {
+                cell.setTextColor(Color.RED)
+            } else {
+                cell.setTextColor(Color.parseColor("#FF368819"))
+            }
+            undoStack.addLast(move)
+            selectCell(cell, move.row, move.col)
+            if (redoStack.isEmpty()) {
+                binding.ivNextStep.alpha = 0.5f
+            }
+        } else {
+            binding.ivNextStep.alpha
+        }
+    }
+
+    fun resetGame() {
+        sudokuGame = SudokuGame()
+        fixedCells.clear()
+        setupSudokuBoard()
+        startTimer()
+    }
+
+    private fun showWinDialog() {
+        timerHandler.removeCallbacks(timerRunnable)
+        AlertDialog.Builder(this)
+            .setTitle("Поздравляем!")
+            .setMessage("Вы прошли игру за ${binding.tvTime.text}")
+            .setPositiveButton("Новая игра") { dialog, which ->
+                resetGame()
+            }
+            .setNegativeButton("Вернуться в меню") { dialog, which ->
+                finish()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    fun initDefaultPuzzle() {
+        for (i in 0 until 9) {
+            for (j in 0 until 9) {
+                if (sudokuGame.puzzle[i][j] != 0) {
+                    fixedCells.add(i to j)
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -62,8 +149,8 @@ class PlayActivity : AppCompatActivity() {
     }
 
 
-
     private fun startTimer() {
+        secondsElapsed = 0
         timerHandler = Handler(Looper.getMainLooper())
         timerRunnable = object : Runnable {
             override fun run() {
@@ -97,14 +184,18 @@ class PlayActivity : AppCompatActivity() {
         }
     }
 
+
     private fun onNumberClick(num: String) {
         if ((selectedCell != null) && isSelectedCell) {
             if ((selectedRow to selectedCol) in fixedCells) {
                 return
             }
-            if (sudokuGame.isFinishedGame()) {
-                null
-            }
+
+            val oldValue = sudokuGame.puzzle[selectedRow][selectedCol]
+            val newValue = num.toInt()
+
+            undoStack.addLast(Move(selectedRow, selectedCol, oldValue, newValue))
+            redoStack.clear()
 
             sudokuGame.puzzle[selectedRow][selectedCol] = num.toInt()
             selectedCell?.text = num
@@ -113,10 +204,18 @@ class PlayActivity : AppCompatActivity() {
             } else {
                 selectedCell?.setTextColor(Color.parseColor("#FF368819"))
             }
+
+            if (sudokuGame.isFinishedGame()) {
+                showWinDialog()
+            }
+
+            binding.ivPreviousStep.alpha = 1f
+
         }
     }
 
     private fun setupSudokuBoard() {
+        Log.d("MyLog", "Init sudoku board")
         val bigPadding = 10f
         val smallPadding = 4f
 
@@ -166,9 +265,9 @@ class PlayActivity : AppCompatActivity() {
                             selectCell(this, i, j)
                         }
                     }
-                    if (sudokuGame.puzzle[i][j] != 0) {
-                        fixedCells.add(i to j)
-                    }
+//                    if (sudokuGame.puzzle[i][j] != 0) {
+//                        fixedCells.add(i to j)
+//                    }
                     gridLayout.addView(cell)
 
                     currX += widthSizeCell
@@ -205,7 +304,6 @@ class PlayActivity : AppCompatActivity() {
             colCell.setBackgroundColor(Color.parseColor("#E0E0E0"))
         }
 
-
         // Определяем границы квадрата 3×3
         val startRow = (row / 3) * 3
         val startCol = (col / 3) * 3
@@ -214,13 +312,11 @@ class PlayActivity : AppCompatActivity() {
         for (r in startRow until startRow + 3) {
             for (c in startCol until startCol + 3) {
                 val squareCell = gridLayout.getChildAt(r * 9 + c) as TextView
-                squareCell.setBackgroundColor(Color.parseColor("#E0E0E0")) // Голубой цвет выделения
+                squareCell.setBackgroundColor(Color.parseColor("#E0E0E0"))
             }
         }
 
         cell.setBackgroundColor(Color.LTGRAY)
-
-
     }
 
     private fun clearPreviousSelection() {

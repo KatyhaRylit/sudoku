@@ -1,14 +1,15 @@
 package com.example.sudoku
 
 class SudokuGame {
-    private val solution: Array<IntArray> = generateSolvedSudoku()
-    val puzzle: Array<IntArray> = removeNumbers(solution, 40)
+    val solution: Array<IntArray> = generateSolvedSudoku()
+    var puzzle: Array<IntArray> = removeNumbers(solution, 3)
 
     private fun generateSolvedSudoku(): Array<IntArray> {
         val board = Array(9) { IntArray(9) { 0 } }
         fillBoard(board)
         return board
     }
+
 
     fun isFinishedGame() : Boolean {
         for (i in 0 until 9) {
