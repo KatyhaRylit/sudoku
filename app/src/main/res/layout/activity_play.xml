@@ -23,7 +23,8 @@
 
         <com.example.sudoku.grid.SudokuGridView
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:elevation="10dp"/>
 
         <GridLayout
             android:id="@+id/sudokuNumbers"
@@ -225,12 +226,12 @@
             android:textColor="@color/black"
             app:cornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btn10"
+            app:layout_constraintEnd_toStartOf="@id/btnDelete"
             app:layout_constraintStart_toEndOf="@id/btn8"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn10"
+            android:id="@+id/btnDelete"
             android:layout_width="30dp"
             android:layout_height="40dp"
             android:backgroundTint="#ddd"
