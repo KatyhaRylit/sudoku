@@ -26,14 +26,20 @@ class PlayActivity : AppCompatActivity() {
     private var selectedCol: Int = -1
     private val undoStack = ArrayDeque<Move>()
     private val redoStack = ArrayDeque<Move>()
+    private lateinit var selectedDifficulty: Difficulty
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val difficultyName = intent.getStringExtra("difficulty") ?: "NORMAL" // По умолчанию NORMAL
+        binding.tvLevel.text = difficultyName
+        selectedDifficulty = Difficulty.valueOf(difficultyName)
+
         gridLayout = findViewById(R.id.sudokuNumbers)
-        sudokuGame = SudokuGame()
+        sudokuGame = SudokuGame(selectedDifficulty)
         initDefaultPuzzle()
         setupSudokuBoard()
         setupButtons()
@@ -112,7 +118,7 @@ class PlayActivity : AppCompatActivity() {
     }
 
     fun resetGame() {
-        sudokuGame = SudokuGame()
+        sudokuGame = SudokuGame(selectedDifficulty)
         fixedCells.clear()
         setupSudokuBoard()
         startTimer()

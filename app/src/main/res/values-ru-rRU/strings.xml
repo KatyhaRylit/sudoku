@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sudoku</string>
+    <string name="easy">Легко</string>
+    <string name="hard">Сложно</string>
+    <string name="normal">Нормально</string>
+    <string name="play">Играть</string>
+    <string name="restart">перезапуск</string>
+</resources>

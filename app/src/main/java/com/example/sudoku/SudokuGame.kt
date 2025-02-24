@@ -1,8 +1,8 @@
 package com.example.sudoku
 
-class SudokuGame {
+class SudokuGame(private val difficulty: Difficulty) {
     val solution: Array<IntArray> = generateSolvedSudoku()
-    var puzzle: Array<IntArray> = removeNumbers(solution, 3)
+    var puzzle: Array<IntArray> = removeNumbers(solution, difficulty)
 
     private fun generateSolvedSudoku(): Array<IntArray> {
         val board = Array(9) { IntArray(9) { 0 } }
@@ -55,9 +55,13 @@ class SudokuGame {
         return true
     }
 
-    private fun removeNumbers(board: Array<IntArray>, difficulty: Int): Array<IntArray> {
+    private fun removeNumbers(board: Array<IntArray>, difficulty: Difficulty): Array<IntArray> {
         val puzzle = board.map { it.clone() }.toTypedArray()
-        var count = difficulty
+        var count = when (difficulty) {
+            Difficulty.EASY -> 30
+            Difficulty.NORMAL -> 40
+            Difficulty.HARD -> 50
+        }
         while (count > 0) {
             val row = (0 until 9).random()
             val col = (0 until 9).random()

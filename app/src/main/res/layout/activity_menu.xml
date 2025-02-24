@@ -6,7 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".MenuActivity">
 
+
+    <Spinner
+        android:id="@+id/spinnerLanguage"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="#e0f0d0"
+        app:layout_constraintBottom_toTopOf="@+id/materialCardView2"
+        app:layout_constraintStart_toStartOf="@+id/materialCardView2" />
+
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView2"
         android:layout_width="0dp"
         android:layout_height="400dp"
         android:layout_marginStart="10dp"
@@ -26,18 +37,70 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_play"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_height="70dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
                 android:layout_marginBottom="40dp"
                 android:backgroundTint="#1A6300"
                 android:fontFamily="@font/roboto_regular"
-                android:text="PLAY"
+                android:text="@string/play"
                 android:textColor="@color/white"
+                android:textSize="30sp"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLevelNormal"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:backgroundTint="#ddd"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/normal"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/btn_play"
+                app:layout_constraintHorizontal_bias="0.733"
+                app:layout_constraintStart_toStartOf="@+id/btn_play"
+                app:layout_constraintTop_toBottomOf="@+id/btnLevelEasy" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLevelHard"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:backgroundTint="#ddd"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/hard"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_play"
+                app:layout_constraintEnd_toEndOf="@+id/btn_play"
+                app:layout_constraintStart_toStartOf="@+id/btn_play"
+                app:layout_constraintTop_toBottomOf="@+id/btnLevelNormal"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLevelEasy"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="30dp"
+                android:backgroundTint="#ddd"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/easy"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/btn_play"
+                app:layout_constraintStart_toStartOf="@+id/btn_play"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
